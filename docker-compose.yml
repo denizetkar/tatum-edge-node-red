@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+    tatum-edge-node-red:
+        image: "${TATUM_IMAGE_REGISTRY_HOST}/tatum-edge-node-red:latest"
+        container_name: tatum-edge-node-red
+        hostname: tatum-edge-node-red
+        ports:
+            - "${NODERED_HOST_PORT}:1880"
+        volumes:
+            - tatum-edge-node-red-data:/data
+
+volumes:
+    tatum-edge-node-red-data:
+        driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: "${NODERED_HOST_VOL_PATH}"
