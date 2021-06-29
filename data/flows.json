@@ -15,9 +15,12 @@
         "type": "function",
         "z": "9e0862f4.a82c9",
         "name": "output msg",
-        "func": "var newMsg = { payload:\n    \"{ \\\"random\\\":\" + Math.random() + \",\" +\n    \"\\\"deviceId\\\": \\\"device-01\\\",\" +\n    \"\\\"timestamp\\\":\" + msg.payload + \"}\"\n}\nreturn newMsg;",
+        "func": "var lat = [ 29.42, 30.26, 32.77, 36.37, 38.62, 39.09, 41.87, 43.03, 44.97, 41.25];\nvar lon = [-98.49,-97.74,-96.79,-94.20,-90.19,-94.57,-87.62,-87.90,-93.26,-95.99];\nvar randomTemp = (Math.random() * (30 - (-30)) + (-30)).toFixed(1);  //random temp from -30.0 to 30.0 degrees\n\nvar idx = context.get('count') || 0;\n\nif( idx > 9 )\n{\n    idx = 0;  \n}\ncontext.set('count',idx+1); //store next idx for later\n\nmsg = {};\nmsg.payload = \n            {\n                \"coord\" : \n                {\n                    \"lat\" : lat[idx],\n                    \"lon\" : lon[idx]\n                },\n                \"deviceVendor\": \"mts_smart\",\n                \"avgTemp\" : randomTemp\n            };\n\nmsg.payload = JSON.stringify(msg.payload);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 930,
         "y": 200,
         "wires": [
@@ -30,6 +33,7 @@
         "id": "a6d8f764.cfe618",
         "type": "moduletwin",
         "z": "9e0862f4.a82c9",
+        "d": true,
         "client": "ad0fb0dd.c701d",
         "x": 490,
         "y": 120,
@@ -124,9 +128,18 @@
         "type": "inject",
         "z": "9e0862f4.a82c9",
         "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
         "repeat": "10",
         "crontab": "",
-        "once": true,
+        "once": false,
         "onceDelay": 0.1,
         "topic": "",
         "payload": "",
@@ -143,45 +156,17 @@
         "id": "541097f6.edc958",
         "type": "modulemethod",
         "z": "9e0862f4.a82c9",
+        "d": true,
         "client": "ad0fb0dd.c701d",
         "method": "setValue",
-        "x": 910,
-        "y": 600,
+        "x": 250,
+        "y": 440,
         "wires": [
             [
                 "d6c374a7.fea2d8",
                 "c3effbe1.9672e8"
             ]
         ]
-    },
-    {
-        "id": "60a82287.44320c",
-        "type": "moduleinput",
-        "z": "9e0862f4.a82c9",
-        "client": "ad0fb0dd.c701d",
-        "input": "input1",
-        "x": 170,
-        "y": 480,
-        "wires": [
-            [
-                "e581a7a2.8c8f78",
-                "772ca5d9.96610c"
-            ]
-        ]
-    },
-    {
-        "id": "e581a7a2.8c8f78",
-        "type": "debug",
-        "z": "9e0862f4.a82c9",
-        "name": "input msg",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "x": 401,
-        "y": 514,
-        "wires": []
     },
     {
         "id": "d6c374a7.fea2d8",
@@ -193,8 +178,8 @@
         "console": false,
         "tostatus": false,
         "complete": "true",
-        "x": 1165,
-        "y": 572,
+        "x": 505,
+        "y": 412,
         "wires": []
     },
     {
@@ -205,23 +190,13 @@
         "func": "var response = { payload:\n\"{\\\"methodpayload\\\": \\\"\" + JSON.stringify(msg.payload) + \"\\\"}\" }\nresponse.payload.timestamp = Date.now()\nresponse.status = 100\nreturn response;",
         "outputs": 1,
         "noerr": 0,
-        "x": 900,
-        "y": 720,
+        "x": 240,
+        "y": 560,
         "wires": [
             [
                 "541097f6.edc958"
             ]
         ]
-    },
-    {
-        "id": "72b700cf.c4535",
-        "type": "moduleoutput",
-        "z": "9e0862f4.a82c9",
-        "client": "ad0fb0dd.c701d",
-        "output": "output2",
-        "x": 665,
-        "y": 440,
-        "wires": []
     },
     {
         "id": "8f5b507c.788c7",
@@ -249,87 +224,8 @@
         "z": "9e0862f4.a82c9",
         "name": "Example: Process Direct Method",
         "info": "The Module Method enables you receive module direct methods. The setup of the module defines which method the node is responding to and what the response is for the method call. The message coming from the node output will have the properties \"topic: method\", \"method: <method name>\" and \"payload: <method payload>\" added to it for selection and identification purposes.\nThe input of the node will have to be used to send a response for the method call. The response (message) wil have to be connected (indirectly) to the message coming from the node output, to ensure a closed loop for the method. When sending a return for the method call on the input, the message property \"status: <your status>\" needs to be set on the message. See the function in the example for details.",
-        "x": 922,
-        "y": 543,
-        "wires": []
-    },
-    {
-        "id": "2ee29c39.98d3f4",
-        "type": "comment",
-        "z": "9e0862f4.a82c9",
-        "name": "Example: Enable module input",
-        "info": "The Module Input enables you to receive input from other modules on your IoT Edge device. To receive input, you have to setup the route to point at the input you specified when you created the node. The node output will provide you with the incoming telemetry message. The message coming from the node output will have the properties \"topic: input\" and \"input: <input name>\" added to it for selection and identification purposes.",
-        "x": 171,
-        "y": 422,
-        "wires": []
-    },
-    {
-        "id": "b548b2c4.d8ccd",
-        "type": "comment",
-        "z": "9e0862f4.a82c9",
-        "name": "Example: Process message and send to output",
-        "info": "Receive an input message and then use another node-red node to change the message and sen it thorugh to an output node.",
-        "x": 649,
-        "y": 358,
-        "wires": []
-    },
-    {
-        "id": "772ca5d9.96610c",
-        "type": "change",
-        "z": "9e0862f4.a82c9",
-        "name": "adjust msg",
-        "rules": [
-            {
-                "t": "delete",
-                "p": "payload.timeCreated",
-                "pt": "msg"
-            },
-            {
-                "t": "set",
-                "p": "payload.timestamp",
-                "pt": "msg",
-                "to": "",
-                "tot": "date"
-            },
-            {
-                "t": "set",
-                "p": "payload.deviceId",
-                "pt": "msg",
-                "to": "device-02",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 415,
-        "y": 410,
-        "wires": [
-            [
-                "72b700cf.c4535"
-            ]
-        ]
-    },
-    {
-        "id": "9f1f9bbd.78b5f8",
-        "type": "comment",
-        "z": "9e0862f4.a82c9",
-        "name": "Example sending reset to simulator",
-        "info": "",
-        "x": 320,
-        "y": 720,
-        "wires": []
-    },
-    {
-        "id": "d74b08a5.13e388",
-        "type": "moduleoutput",
-        "z": "9e0862f4.a82c9",
-        "client": "ad0fb0dd.c701d",
-        "output": "output3",
-        "x": 410,
-        "y": 800,
+        "x": 262,
+        "y": 383,
         "wires": []
     }
 ]
