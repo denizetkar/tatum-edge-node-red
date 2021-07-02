@@ -6,7 +6,7 @@
           "tatum-edge-module": {
             "settings": {
               "image": "PRIVATE_IMAGE_REGISTRY_HOST/tatum-edge-node-red:latest",
-              "createOptions": "{\"HostConfig\":{\"Privileged\":true,\"Binds\":[\"/node-red:/data\"],\"PortBindings\":{\"1880/tcp\":[{\"HostPort\":\"1880\"}]}}}"
+              "createOptions": "{\"HostConfig\":{\"Privileged\":true,\"PortBindings\":{\"1880/tcp\":[{\"HostPort\":\"1880\"}]}}}"
             },
             "type": "docker",
             "version": "1.0",
