@@ -43,13 +43,13 @@ if ! [[ -f "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
         value=$(sed -e 's/^"//' -e 's/"$//' <<< ${line_tokens[1]})
         os_properties[${line_tokens[0]}]=$value
     done < "$input"
-    if [[ ${os_properties['NAME']} =~ .*[Uu]buntu.* ]]; then
+    if [[ ${os_properties['ID']} =~ .*[Uu]buntu.* ]]; then
         sudo -u $real_user curl https://packages.microsoft.com/config/ubuntu/${os_properties['VERSION_ID']}/multiarch/prod.list > ./microsoft-prod.list
-    elif [[ ${os_properties['NAME']} =~ .*[Dd]ebian.* ]]; then
+    elif [[ ${os_properties['ID']} =~ .*[Dd]ebian.* ]]; then
         sudo -u $real_user curl https://packages.microsoft.com/config/debian/stretch/multiarch/prod.list > ./microsoft-prod.list
     else
         # https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge?view=iotedge-2018-06#prerequisites
-        echo "The OS ${os_properties['NAME']} is not supported by Azure IoT Edge runtime!"
+        echo "The OS ${os_properties['ID']} is not supported by Azure IoT Edge runtime!"
         exit 1
     fi
     mv ./microsoft-prod.list /etc/apt/sources.list.d/
