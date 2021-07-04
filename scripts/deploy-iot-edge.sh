@@ -35,7 +35,23 @@ if ! sudo -u $real_user dpkg-query -l curl &> /dev/null; then
 fi
 # Update apt repository sources to install 'moby-engine' from Microsoft.
 if ! [[ -f "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
-    sudo -u $real_user curl https://packages.microsoft.com/config/ubuntu/18.04/multiarch/prod.list > ./microsoft-prod.list
+
+    input="/etc/os-release"
+    while IFS="=" read -ra line_tokens
+    do
+        if [[ ${line_tokens[0]} = NAME ]]; then
+            if [[ ${line_tokens[1]} =~ Ubuntu* ]]; then
+                sudo -u $real_user curl https://packages.microsoft.com/config/ubuntu/18.04/multiarch/prod.list > ./microsoft-prod.list
+            elif [[ ${line_tokens[1]} =~ Debian* ]]; then
+                sudo -u $real_user curl https://packages.microsoft.com/config/debian/stretch/multiarch/prod.list > ./microsoft-prod.list
+            else
+                # https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge?view=iotedge-2018-06#prerequisites
+                echo "The OS ${line_tokens[1]} is not supported by Azure IoT Edge runtime!"
+                exit 1
+            fi
+            break
+        fi
+    done < "$input"
     mv ./microsoft-prod.list /etc/apt/sources.list.d/
 fi
 if ! [[ -f "/etc/apt/trusted.gpg.d/microsoft.gpg" ]]; then
