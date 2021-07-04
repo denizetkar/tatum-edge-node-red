@@ -40,9 +40,9 @@ if ! [[ -f "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
     while IFS="=" read -ra line_tokens
     do
         if [[ ${line_tokens[0]} = NAME ]]; then
-            if [[ ${line_tokens[1]} =~ Ubuntu* ]]; then
+            if [[ ${line_tokens[1]} =~ .*[Uu]buntu.* ]]; then
                 sudo -u $real_user curl https://packages.microsoft.com/config/ubuntu/18.04/multiarch/prod.list > ./microsoft-prod.list
-            elif [[ ${line_tokens[1]} =~ Debian* ]]; then
+            elif [[ ${line_tokens[1]} =~ .*[Dd]ebian.* ]]; then
                 sudo -u $real_user curl https://packages.microsoft.com/config/debian/stretch/multiarch/prod.list > ./microsoft-prod.list
             else
                 # https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge?view=iotedge-2018-06#prerequisites
