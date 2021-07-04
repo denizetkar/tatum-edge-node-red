@@ -35,7 +35,7 @@ if ! sudo -u $real_user dpkg-query -l curl &> /dev/null; then
 fi
 # Update apt repository sources to install 'moby-engine' from Microsoft.
 if ! [[ -f "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
-
+    sudo -u $real_user curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
     input="/etc/os-release"
     while IFS="=" read -ra line_tokens
     do
@@ -66,6 +66,8 @@ if ! sudo -u $real_user dpkg-query -l moby-engine &> /dev/null; then
     python3 "${script_path}/docker-configure.py"
     systemctl restart docker
 fi
+groupadd docker 2> /dev/null
+usermod -aG docker $real_user
 
 
 # Create and import a self-signed certificate to later install it into IoT edge security daemon
