@@ -31,7 +31,6 @@ foreach ($arch in $desired_archs) {
 $dockerfile_path = "./Dockerfile"
 $build_context_path = "."
 $build_tag = "${DockerId}/tatum-edge-node-red:latest"
-$docker_build_cmd = "docker buildx build -f ${dockerfile_path} ${build_context_path} -t ${build_tag} --platform $([System.String]::Join(",", $desired_archs)) --load"
+$docker_build_cmd = "docker buildx build -f ${dockerfile_path} -t ${build_tag} --platform $([System.String]::Join(",", $desired_archs)) --push ${build_context_path}"
 $docker_build_cmd += $build_arg_str
 Invoke-Expression -Command $docker_build_cmd
-docker push ${build_tag}
