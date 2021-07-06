@@ -1,7 +1,6 @@
-ARG ARCH="amd64"
 ARG NODE_VERSION="12"
 
-FROM nodered/node-red:1.3.5-${NODE_VERSION}-${ARCH}
+FROM nodered/node-red:1.3.5-${NODE_VERSION}
 
 USER node-red
 
