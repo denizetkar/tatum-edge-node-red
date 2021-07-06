@@ -45,7 +45,7 @@ if ! [[ -f "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
     done < "$input"
     if [[ ${os_properties['ID']} =~ .*[Uu]buntu.* ]]; then
         sudo -u $real_user curl https://packages.microsoft.com/config/ubuntu/${os_properties['VERSION_ID']}/multiarch/prod.list > ./microsoft-prod.list
-    elif [[ ${os_properties['ID']} =~ .*[Dd]ebian.* ]]; then
+    elif [[ ${os_properties['ID']} =~ .*[Rr]aspbian.* ]]; then
         sudo -u $real_user curl https://packages.microsoft.com/config/debian/stretch/multiarch/prod.list > ./microsoft-prod.list
     else
         # https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge?view=iotedge-2018-06#prerequisites
@@ -61,7 +61,7 @@ fi
 apt-get update
 # Make sure the moby container engine is installed
 if ! sudo -u $real_user dpkg-query -l moby-engine &> /dev/null; then
-    apt-get install -y moby-engine
+    apt-get install -y moby-engine || exit 1
     # Configure container runtime settings to disable infinite logging
     python3 "${script_path}/docker-configure.py"
     systemctl restart docker
@@ -75,7 +75,7 @@ usermod -aG docker $real_user
 if ! { sudo -u $real_user dpkg-query -l libssl-dev &> /dev/null \
     && sudo -u $real_user dpkg-query -l ca-certificates &> /dev/null \
     && sudo -u $real_user dpkg-query -l ntp &> /dev/null; }; then
-    apt-get install -y libssl-dev ca-certificates ntp
+    apt-get install -y libssl-dev ca-certificates ntp || exit 1
 fi
 sudo -u $real_user openssl req -x509 -nodes -newkey rsa:4096 \
     -subj "/CN=${device_id}-ca" -keyout ./iotedge-cakey.pem -out ./iotedge-cacert.pem -days 5475
@@ -84,7 +84,6 @@ cp ./iotedge-cacert.pem /usr/local/share/ca-certificates/extra/iotedge-cacert.cr
 update-ca-certificates
 mkdir -p /var/secrets/iotedge
 cp ./{iotedge-cacert.pem,iotedge-cakey.pem} /var/secrets/iotedge
-chown -R iotedge:iotedge /var/secrets/iotedge
 chmod -R u+r /var/secrets/iotedge
 rm ./iotedge-cacert.pem ./iotedge-cakey.pem
 
@@ -93,7 +92,7 @@ rm ./iotedge-cacert.pem ./iotedge-cakey.pem
 if ! sudo -u $real_user dpkg-query -l iotedge &> /dev/null; then
     config_file_path="./config.yaml"
     rm -rf /var/lib/iotedge/hsm/certs/* /var/lib/iotedge/hsm/cert_keys/*
-    apt-get install -y iotedge
+    apt-get install -y iotedge || exit 1
     cp /etc/iotedge/config.yaml $config_file_path
     # After editing config.yaml, move it back to '/etc/iotedge/config.yaml'
     cat $config_file_path | \
@@ -121,6 +120,7 @@ certificates:
 EOF
     cp $config_file_path /etc/iotedge/config.yaml
     chown $real_user:$real_user $config_file_path
+    chown -R iotedge:iotedge /var/secrets/iotedge
     # Then apply the changes
     systemctl restart iotedge
 fi
