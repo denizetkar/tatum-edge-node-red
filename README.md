@@ -12,8 +12,7 @@ This project implements a docker image that contains **Node RED** which was mean
 * To deploy Azure IoT edge runtime into the IoT device:
   * A linux device, see [HERE](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge?view=iotedge-2018-06#prerequisites) for detailed prerequisites.
   * A `bash` shell,
-  * `python3` must be installed (Python 3.7+),
-  * Azure CLI, see [HERE](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) for more details.
+  * `python3` must be installed (Python 3.7+).
 * To deploy the image into an IoT edge device:
   * A `bash` shell,
   * Azure CLI, see [HERE](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) for more details.
