@@ -2,7 +2,11 @@ version: '3'
 
 services:
     tatum-edge-node-red:
-        image: "${TATUM_IMAGE_REGISTRY_HOST}/tatum-edge-node-red:latest"
+        image: "${TATUM_IMAGE_REGISTRY_HOST}/tatum-edge-node-red:gps"
+        group_add:
+            - dialout
+        devices:
+            - "/dev/ttyACM0:/dev/ttyACM0"
         container_name: tatum-edge-node-red
         hostname: tatum-edge-node-red
         ports:
