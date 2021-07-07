@@ -161,3 +161,4 @@ temp/
 node_modules
 npm-debug.log
 *.backup
+/node-red*
