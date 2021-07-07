@@ -10,5 +10,4 @@ RUN npm install node-red-contrib-azure-iot-edge-module
 
 EXPOSE 1880/tcp
 
-USER root
 ENTRYPOINT ["npm", "--no-update-notifier", "--no-fund", "start", "--cache", "/data/.npm", "--", "--userDir", "/data", "/data/flows.json"]
