@@ -124,8 +124,3 @@ EOF
     # Then apply the changes
     systemctl restart iotedge
 fi
-
-
-# To delete everything:
-#sudo apt-get remove --purge -y iotedge && sudo rm -rf /run/iotedge /etc/logrotate.d/iotedge /etc/init.d/iotedge /etc/iotedge /etc/default/iotedge /var/lib/iotedge
-# Also don't forget to clean up the stopped docker containers, networks and so on.
