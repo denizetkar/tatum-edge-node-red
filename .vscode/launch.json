@@ -5,15 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Telemetry Collection",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/data/telemetry.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "justMyCode": false
-        },
-        {
             "name": "PowerShell: Build and Push Image",
             "type": "PowerShell",
             "request": "launch",

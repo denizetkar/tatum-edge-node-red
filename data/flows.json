@@ -1,1 +1,231 @@
-[{"id":"9e0862f4.a82c9","type":"tab","label":"Example Flow","disabled":false,"info":""},{"id":"ad0fb0dd.c701d","type":"edgeclient"},{"id":"8a770dff.d5cf1","type":"function","z":"9e0862f4.a82c9","d":true,"name":"output msg","func":"var lat = [ 29.42, 30.26, 32.77, 36.37, 38.62, 39.09, 41.87, 43.03, 44.97, 41.25];\nvar lon = [-98.49,-97.74,-96.79,-94.20,-90.19,-94.57,-87.62,-87.90,-93.26,-95.99];\nvar randomTemp = (Math.random() * (30 - (-30)) + (-30)).toFixed(1);  //random temp from -30.0 to 30.0 degrees\n\nvar idx = context.get('count') || 0;\n\nif( idx > 9 )\n{\n    idx = 0;  \n}\ncontext.set('count',idx+1); //store next idx for later\n\nmsg = {};\nmsg.payload = \n            {\n                \"coord\" : \n                {\n                    \"lat\" : lat[idx],\n                    \"lon\" : lon[idx]\n                },\n                \"deviceVendor\": \"test_vendor\",\n                \"avgTemp\" : randomTemp\n            };\n\nmsg.payload = JSON.stringify(msg.payload);\n\nreturn msg;","outputs":1,"noerr":0,"initialize":"","finalize":"","libs":[],"x":910,"y":60,"wires":[["d8dae50b.812ae8"]]},{"id":"a6d8f764.cfe618","type":"moduletwin","z":"9e0862f4.a82c9","d":true,"client":"ad0fb0dd.c701d","x":450,"y":580,"wires":[["ce65f7c5.c5d048"]]},{"id":"ce65f7c5.c5d048","type":"debug","z":"9e0862f4.a82c9","name":"twin msg","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"true","x":670,"y":520,"wires":[]},{"id":"ba813da4.bd919","type":"inject","z":"9e0862f4.a82c9","name":"running","repeat":"","crontab":"","once":false,"onceDelay":"0.1","topic":"","payload":"running","payloadType":"str","x":86,"y":538,"wires":[["329a4a8d.cadb16"]]},{"id":"329a4a8d.cadb16","type":"function","z":"9e0862f4.a82c9","name":"reported msg","func":"var reported = { payload:\n\"{\\\"moduleStatus\\\": \\\"\" + msg.payload + \"\\\"}\" }\nreturn reported;","outputs":1,"noerr":0,"x":246,"y":618,"wires":[["a6d8f764.cfe618"]]},{"id":"6fed83d0.7d743c","type":"inject","z":"9e0862f4.a82c9","name":"stopped","repeat":"","crontab":"","once":false,"onceDelay":"0.1","topic":"","payload":"stopped","payloadType":"str","x":86,"y":678,"wires":[["329a4a8d.cadb16"]]},{"id":"d8dae50b.812ae8","type":"moduleoutput","z":"9e0862f4.a82c9","client":"ad0fb0dd.c701d","output":"output1","x":1195,"y":248,"wires":[]},{"id":"77eac982.43ff08","type":"inject","z":"9e0862f4.a82c9","name":"","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"10","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":690,"y":60,"wires":[["8a770dff.d5cf1"]]},{"id":"541097f6.edc958","type":"modulemethod","z":"9e0862f4.a82c9","d":true,"client":"ad0fb0dd.c701d","method":"setValue","x":950,"y":580,"wires":[["d6c374a7.fea2d8","c3effbe1.9672e8"]]},{"id":"d6c374a7.fea2d8","type":"debug","z":"9e0862f4.a82c9","name":"method msg","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"true","x":1205,"y":552,"wires":[]},{"id":"c3effbe1.9672e8","type":"function","z":"9e0862f4.a82c9","name":"response msg","func":"var response = { payload:\n\"{\\\"methodpayload\\\": \\\"\" + JSON.stringify(msg.payload) + \"\\\"}\" }\nresponse.payload.timestamp = Date.now()\nresponse.status = 100\nreturn response;","outputs":1,"noerr":0,"x":940,"y":700,"wires":[["541097f6.edc958"]]},{"id":"8f5b507c.788c7","type":"comment","z":"9e0862f4.a82c9","name":"Example: Work with module twin","info":"The Module Twin enables you to interact with the module twin on IoT Hub. The node output will provide the twin desired property changes and the node input will enable you to send reported properties back to the IoT Hub. The message coming from the node output will have the property \"topic: desired\" added to it for selection and identification purposes.","x":406,"y":527,"wires":[]},{"id":"cb6c11b9.3becc","type":"comment","z":"9e0862f4.a82c9","name":"Example: Simulate module output","info":"The Module Output enables you to send output to the edgeHub. To send output to another module or to the IoT Hub you have to setup the route to use the output when you created the node. The node input will enable you to send the telemetry message.","x":930,"y":20,"wires":[]},{"id":"f9ed4fb7.8e983","type":"comment","z":"9e0862f4.a82c9","name":"Example: Process Direct Method","info":"The Module Method enables you receive module direct methods. The setup of the module defines which method the node is responding to and what the response is for the method call. The message coming from the node output will have the properties \"topic: method\", \"method: <method name>\" and \"payload: <method payload>\" added to it for selection and identification purposes.\nThe input of the node will have to be used to send a response for the method call. The response (message) wil have to be connected (indirectly) to the message coming from the node output, to ensure a closed loop for the method. When sending a return for the method call on the input, the message property \"status: <your status>\" needs to be set on the message. See the function in the example for details.","x":962,"y":523,"wires":[]},{"id":"8a698e00.7d667","type":"inject","z":"9e0862f4.a82c9","name":"Start Telemetry Collection","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"","crontab":"","once":true,"onceDelay":"0","topic":"","payload":"","payloadType":"date","x":150,"y":160,"wires":[["34e29595.aeba1a"]]},{"id":"34e29595.aeba1a","type":"exec","z":"9e0862f4.a82c9","command":"python3 -u /data/telemetry.py","addpay":"","append":"--gps-port \"/dev/ttyACM0\"","useSpawn":"true","timer":"","oldrc":false,"name":"Telemetry Collection","x":460,"y":160,"wires":[["7e3de120.a422e"],[],["8aa980fe.48437"]]},{"id":"8aa980fe.48437","type":"function","z":"9e0862f4.a82c9","name":"Restart","func":"return msg;","outputs":1,"noerr":0,"initialize":"","finalize":"","libs":[],"x":440,"y":320,"wires":[["34e29595.aeba1a"]]},{"id":"7e3de120.a422e","type":"function","z":"9e0862f4.a82c9","name":"Parse Telemetry","func":"payload = JSON.parse(msg.payload);\npayload.deviceVendor = \"test_vendor\";\nreturn {\"payload\": JSON.stringify(payload)};","outputs":1,"noerr":0,"initialize":"","finalize":"","libs":[],"x":830,"y":180,"wires":[["d8dae50b.812ae8"]]}]
+[
+    {
+        "id": "9e0862f4.a82c9",
+        "type": "tab",
+        "label": "Example Flow",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ad0fb0dd.c701d",
+        "type": "edgeclient"
+    },
+    {
+        "id": "8a770dff.d5cf1",
+        "type": "function",
+        "z": "9e0862f4.a82c9",
+        "name": "output msg",
+        "func": "var lat = [ 29.42, 30.26, 32.77, 36.37, 38.62, 39.09, 41.87, 43.03, 44.97, 41.25];\nvar lon = [-98.49,-97.74,-96.79,-94.20,-90.19,-94.57,-87.62,-87.90,-93.26,-95.99];\nvar randomTemp = (Math.random() * (30 - (-30)) + (-30)).toFixed(1);  //random temp from -30.0 to 30.0 degrees\n\nvar idx = context.get('count') || 0;\n\nif( idx > 9 )\n{\n    idx = 0;  \n}\ncontext.set('count',idx+1); //store next idx for later\n\nmsg = {};\nmsg.payload = \n            {\n                \"coord\" : \n                {\n                    \"lat\" : lat[idx],\n                    \"lon\" : lon[idx]\n                },\n                \"deviceVendor\": \"test_vendor\",\n                \"avgTemp\" : randomTemp\n            };\n\nmsg.payload = JSON.stringify(msg.payload);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 200,
+        "wires": [
+            [
+                "d8dae50b.812ae8"
+            ]
+        ]
+    },
+    {
+        "id": "a6d8f764.cfe618",
+        "type": "moduletwin",
+        "z": "9e0862f4.a82c9",
+        "d": true,
+        "client": "ad0fb0dd.c701d",
+        "x": 490,
+        "y": 120,
+        "wires": [
+            [
+                "ce65f7c5.c5d048"
+            ]
+        ]
+    },
+    {
+        "id": "ce65f7c5.c5d048",
+        "type": "debug",
+        "z": "9e0862f4.a82c9",
+        "name": "twin msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 710,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "ba813da4.bd919",
+        "type": "inject",
+        "z": "9e0862f4.a82c9",
+        "name": "running",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "0.1",
+        "topic": "",
+        "payload": "running",
+        "payloadType": "str",
+        "x": 126,
+        "y": 78,
+        "wires": [
+            [
+                "329a4a8d.cadb16"
+            ]
+        ]
+    },
+    {
+        "id": "329a4a8d.cadb16",
+        "type": "function",
+        "z": "9e0862f4.a82c9",
+        "name": "reported msg",
+        "func": "var reported = { payload:\n\"{\\\"moduleStatus\\\": \\\"\" + msg.payload + \"\\\"}\" }\nreturn reported;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 286,
+        "y": 158,
+        "wires": [
+            [
+                "a6d8f764.cfe618"
+            ]
+        ]
+    },
+    {
+        "id": "6fed83d0.7d743c",
+        "type": "inject",
+        "z": "9e0862f4.a82c9",
+        "name": "stopped",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "0.1",
+        "topic": "",
+        "payload": "stopped",
+        "payloadType": "str",
+        "x": 126,
+        "y": 218,
+        "wires": [
+            [
+                "329a4a8d.cadb16"
+            ]
+        ]
+    },
+    {
+        "id": "d8dae50b.812ae8",
+        "type": "moduleoutput",
+        "z": "9e0862f4.a82c9",
+        "client": "ad0fb0dd.c701d",
+        "output": "output1",
+        "x": 1195,
+        "y": 248,
+        "wires": []
+    },
+    {
+        "id": "77eac982.43ff08",
+        "type": "inject",
+        "z": "9e0862f4.a82c9",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 720,
+        "y": 260,
+        "wires": [
+            [
+                "8a770dff.d5cf1"
+            ]
+        ]
+    },
+    {
+        "id": "541097f6.edc958",
+        "type": "modulemethod",
+        "z": "9e0862f4.a82c9",
+        "d": true,
+        "client": "ad0fb0dd.c701d",
+        "method": "setValue",
+        "x": 250,
+        "y": 440,
+        "wires": [
+            [
+                "d6c374a7.fea2d8",
+                "c3effbe1.9672e8"
+            ]
+        ]
+    },
+    {
+        "id": "d6c374a7.fea2d8",
+        "type": "debug",
+        "z": "9e0862f4.a82c9",
+        "name": "method msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 505,
+        "y": 412,
+        "wires": []
+    },
+    {
+        "id": "c3effbe1.9672e8",
+        "type": "function",
+        "z": "9e0862f4.a82c9",
+        "name": "response msg",
+        "func": "var response = { payload:\n\"{\\\"methodpayload\\\": \\\"\" + JSON.stringify(msg.payload) + \"\\\"}\" }\nresponse.payload.timestamp = Date.now()\nresponse.status = 100\nreturn response;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 240,
+        "y": 560,
+        "wires": [
+            [
+                "541097f6.edc958"
+            ]
+        ]
+    },
+    {
+        "id": "8f5b507c.788c7",
+        "type": "comment",
+        "z": "9e0862f4.a82c9",
+        "name": "Example: Work with module twin",
+        "info": "The Module Twin enables you to interact with the module twin on IoT Hub. The node output will provide the twin desired property changes and the node input will enable you to send reported properties back to the IoT Hub. The message coming from the node output will have the property \"topic: desired\" added to it for selection and identification purposes.",
+        "x": 446,
+        "y": 67,
+        "wires": []
+    },
+    {
+        "id": "cb6c11b9.3becc",
+        "type": "comment",
+        "z": "9e0862f4.a82c9",
+        "name": "Example: Simulate module output",
+        "info": "The Module Output enables you to send output to the edgeHub. To send output to another module or to the IoT Hub you have to setup the route to use the output when you created the node. The node input will enable you to send the telemetry message.",
+        "x": 977,
+        "y": 147,
+        "wires": []
+    },
+    {
+        "id": "f9ed4fb7.8e983",
+        "type": "comment",
+        "z": "9e0862f4.a82c9",
+        "name": "Example: Process Direct Method",
+        "info": "The Module Method enables you receive module direct methods. The setup of the module defines which method the node is responding to and what the response is for the method call. The message coming from the node output will have the properties \"topic: method\", \"method: <method name>\" and \"payload: <method payload>\" added to it for selection and identification purposes.\nThe input of the node will have to be used to send a response for the method call. The response (message) wil have to be connected (indirectly) to the message coming from the node output, to ensure a closed loop for the method. When sending a return for the method call on the input, the message property \"status: <your status>\" needs to be set on the message. See the function in the example for details.",
+        "x": 262,
+        "y": 383,
+        "wires": []
+    }
+]
