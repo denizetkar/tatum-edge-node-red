@@ -29,6 +29,7 @@ This project implements a docker image that contains **Node RED** which was mean
   * See [HERE](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge?view=iotedge-2018-06) for more details.
 * To deploy the image into an IoT edge device:
   * In the file `manifests/deployment.json`,
+    * Change the container image tag from `:latest` to whatever tag you want (e.g., `:gps`),
     * Replace `PRIVATE_IMAGE_REGISTRY_HOST` with the image registry url,
     * Replace `PRIVATE_IMAGE_REGISTRY_USERNAME` with the username,
     * Replace `PRIVATE_IMAGE_REGISTRY_PASSWORD` with the password.
