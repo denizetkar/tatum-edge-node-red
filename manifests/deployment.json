@@ -5,7 +5,7 @@
         "modules": {
           "tatum-edge-module": {
             "settings": {
-              "image": "PRIVATE_IMAGE_REGISTRY_HOST/tatum-edge-node-red:latest",
+              "image": "PRIVATE_IMAGE_REGISTRY_HOST/tatum-edge-node-red:gps",
               "createOptions": "{\"HostConfig\": {\"Privileged\": true, \"PortBindings\": {\"1880/tcp\": [{\"HostPort\": \"1880\"}]}, \"GroupAdd\": [\"dialout\"]}}"
             },
             "type": "docker",
