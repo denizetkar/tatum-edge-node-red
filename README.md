@@ -7,11 +7,11 @@ This project implements a docker image that contains **Node RED** which was mean
 
 ## Dependencies
 * To build and push the container image:
-  * Latest Docker (>= 20.10.6), see [HERE](https://docs.docker.com/get-docker/) for details.
-  * Latest Powershell (>=7.1.3), see [HERE](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.1) for details.
+  * Latest **Docker** (>= 20.10.6), see [HERE](https://docs.docker.com/get-docker/) for details.
+  * Latest **Powershell** (>=7.1.3), see [HERE](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.1) for details.
 * To deploy Azure IoT edge runtime into the IoT device:
   * A linux device, see [HERE](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge?view=iotedge-2018-06#prerequisites) for detailed prerequisites.
-  * A `bash` shell,
+  * A `bash` shell (>4.0),
   * `python3` must be installed (Python 3.7+).
 * To deploy the image into an IoT edge device:
   * A `bash` shell,
@@ -21,13 +21,14 @@ This project implements a docker image that contains **Node RED** which was mean
 * To build and push the container image:
   * Open a **powershell** terminal in the project root folder,
   * Run `docker login <image-repo-url>` to login to the image repository,
-  * Run `build-and-push-image.ps1` with its command line arguments.
+  * Run `build-and-push-image.ps1` with its command line arguments. For example:
+    * `./build-and-push-image.ps1 -DockerId <image-repo-url>`
 * To deploy Azure IoT edge runtime into the IoT device:
   * Open a **bash** terminal in the project root folder,
   * Run `sudo ./scripts/deploy-iot-edge.sh [EDGE_DEVICE_CONN_STR]`,
     * `[EDGE_DEVICE_CONN_STR]` is the connection string of the edge device in which we are deploying IoT Edge runtime,
   * See [HERE](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge?view=iotedge-2018-06) for more details.
-* To deploy the image into an IoT edge device:
+* To deploy the container image into an IoT edge device:
   * In the file `manifests/deployment.json`,
     * Change the container image tag from `:latest` to whatever tag you want (e.g., `:gps`),
     * Replace `PRIVATE_IMAGE_REGISTRY_HOST` with the image registry url,
