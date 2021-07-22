@@ -105,7 +105,7 @@ if ! sudo -u $real_user dpkg-query -l iotedge &> /dev/null; then
         -e 's/^  device_ca_pk:/#  device_ca_pk:/' \
         -e 's/^  trusted_ca_certs:/#  trusted_ca_certs:/' \
         -e 's/^  auto_generated_ca_lifetime_days:/#  auto_generated_ca_lifetime_days:/' \
-        | tee -a $config_file_path > /dev/null
+        | tee $config_file_path > /dev/null
     # https://docs.microsoft.com/en-us/azure/iot-edge/how-to-manage-device-certificates?view=iotedge-2018-06
     tee -a $config_file_path > /dev/null << EOF
 provisioning:
